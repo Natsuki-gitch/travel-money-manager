@@ -43,7 +43,7 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
-  config.hosts << "travel-money-manager.onrender.com"
+  config.host_authorization = { exclude: ->(_request) { true } }
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
