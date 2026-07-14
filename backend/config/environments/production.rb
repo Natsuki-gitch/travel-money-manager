@@ -43,7 +43,10 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
-  config.host_authorization = { exclude: ->(_request) { true } }
+
+  # Renderの本番ホストを明示的に許可する（許可リストはconfig/application.rbにもあり、
+  # RAILS_ENVの設定漏れでdevelopment扱いになった場合でも同じホストを許可する）。
+  config.hosts << "travel-money-manager.onrender.com"
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)

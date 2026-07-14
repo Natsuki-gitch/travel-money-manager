@@ -40,5 +40,9 @@ module Backend
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # RAILS_ENVの設定漏れなどでdevelopment扱いになった場合でも、
+    # Renderの本番ホストへのアクセスがHost Authorizationでブロックされないようにする。
+    config.hosts << "travel-money-manager.onrender.com" if Rails.env.production? || Rails.env.development?
   end
 end
