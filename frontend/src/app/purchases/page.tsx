@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCIES } from "@/lib/currencies";
-import { CARD_OPTIONS, getCardFeeRate } from "@/lib/cardFees";
+import { CARD_OPTIONS, getCardFeeRate, getDefaultCardForUser } from "@/lib/cardFees";
 import { fetchJpyRates } from "@/lib/exchangeRates";
 import {
   createPurchase,
   deletePurchase,
   fetchPurchases,
+  getCurrentUserEmail,
   getToken,
   logout,
   updatePurchaseItemName,
@@ -55,9 +56,13 @@ export default function PurchasesPage() {
   const [editingValue, setEditingValue] = useState("");
 
   // サーバー/クライアントの日付ずれ(hydrationミスマッチ)を避けるため、
-  // 今日の日付はマウント後にセットする。
+  // 今日の日付・ログインユーザーのデフォルトカードはマウント後にセットする。
   useEffect(() => {
-    setForm((prev) => ({ ...prev, purchaseDate: getTodayDateString() }));
+    setForm((prev) => ({
+      ...prev,
+      purchaseDate: getTodayDateString(),
+      cardName: getDefaultCardForUser(getCurrentUserEmail()),
+    }));
   }, []);
 
   useEffect(() => {
@@ -121,6 +126,7 @@ export default function PurchasesPage() {
         ...initialForm,
         purchaseDate: getTodayDateString(),
         exchangeRate: resetRate !== undefined ? resetRate.toFixed(4) : "",
+        cardName: getDefaultCardForUser(getCurrentUserEmail()),
       });
     } catch {
       setLoadError("登録に失敗しました");

@@ -2,10 +2,16 @@ import { Purchase } from "@/types/purchase";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const TOKEN_KEY = "authToken";
+const USER_EMAIL_KEY = "authUserEmail";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
+}
+
+export function getCurrentUserEmail(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(USER_EMAIL_KEY);
 }
 
 function setToken(token: string) {
@@ -14,6 +20,7 @@ function setToken(token: string) {
 
 function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_EMAIL_KEY);
 }
 
 export async function login(email: string, password: string): Promise<void> {
@@ -32,6 +39,9 @@ export async function login(email: string, password: string): Promise<void> {
     throw new Error("認証トークンの取得に失敗しました");
   }
   setToken(token);
+
+  const data: { user: { email: string } } = await res.json();
+  localStorage.setItem(USER_EMAIL_KEY, data.user.email);
 }
 
 export async function logout(): Promise<void> {
